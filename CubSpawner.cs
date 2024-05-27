@@ -26,9 +26,6 @@ public class CubSpawner : MonoBehaviour
 
     private void SpawnCubs(Cub cub)
     {
-        cub.Clicked -= SpawnCubs;
-        _cubs.Remove(cub);
-
         if (cub.SeparationChance > (float)_random.NextDouble())
         {
             int count = _random.Next(_minCountCreatedCubes, _maxCountCreatedCubes + 1);
@@ -40,6 +37,9 @@ public class CubSpawner : MonoBehaviour
             foreach (Rigidbody explosionObject in explosionObjects)
                 explosionObject.AddExplosionForce(_explosionForce, cub.transform.position, _explosionRadius);
         }
+
+        cub.Clicked -= SpawnCubs;
+        _cubs.Remove(cub);
     }
 
     private Cub InstantiateCub(Cub cub)
