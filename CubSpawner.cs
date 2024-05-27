@@ -27,12 +27,11 @@ public class CubSpawner : MonoBehaviour
     private void SpawnCubs(Cub cub)
     {
         cub.Clicked -= SpawnCubs;
+        _cubs.Remove(cub);
 
         if (cub.SeparationChance > (float)_random.NextDouble())
         {
             int count = _random.Next(_minCountCreatedCubes, _maxCountCreatedCubes + 1);
-
-            _cubs.Remove(cub);
             List<Rigidbody> explosionObjects = new List<Rigidbody>();
 
             for (int i = 0; i < count; i++)
