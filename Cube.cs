@@ -1,11 +1,13 @@
+using System;
 using UnityEngine;
-using UnityEngine.Events;
 
+[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(Rigidbody))]
 public class Cube : MonoBehaviour
 {
     [SerializeField] private float _separationChance = 1f;
 
-    public event UnityAction<Cube> Clicked;
+    public event Action<Cube> Clicked;
 
     public float SeparationChance => _separationChance;
 
@@ -15,8 +17,18 @@ public class Cube : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void SetSeparationChance(float newSeparationChance)
+    public void SetSeparationChance(float separationChance)
     {
-        _separationChance = newSeparationChance;
+        _separationChance = separationChance;
+    }
+
+    public void SerColor(Color color)
+    {
+        GetComponent<Renderer>().material.color = color;
+    }
+
+    public void AddForse(Vector3 force)
+    {
+        GetComponent<Rigidbody>().AddForce(force);
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Detonator : MonoBehaviour
@@ -7,17 +8,22 @@ public class Detonator : MonoBehaviour
 
     private void OnEnable()
     {
-        _cubeSpawner.CubeCreated += Detonate;
+        _cubeSpawner.CubesCreated += Detonate;
     }
 
     private void OnDisable()
     {
-        _cubeSpawner.CubeCreated -= Detonate;
+        _cubeSpawner.CubesCreated -= Detonate;
     }
 
-    private void Detonate()
+    private void Detonate(List<Cube> cubes)
     {
-        Vector3 force = new Vector3(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value) * _explosionForce;
-        _cubeSpawner.NewCube.GetComponent<Rigidbody>().AddForce(force);
+        Vector3 force;
+
+        foreach (Cube cube in cubes)
+        {
+            force = new Vector3(Random.value, Random.value, Random.value) * _explosionForce;
+            cube.AddForse(force);
+        }
     }
 }

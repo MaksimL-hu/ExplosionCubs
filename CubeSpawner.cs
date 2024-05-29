@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class CubeSpawner : MonoBehaviour
 {
@@ -10,9 +11,7 @@ public class CubeSpawner : MonoBehaviour
     [SerializeField] private int _decreaseSeparationChance = 2;
     [SerializeField] private List<Cube> _cubes;
 
-    public Cube NewCube { get; private set; }
-
-    public event UnityAction CubeCreated;
+    public event Action<List<Cube>> CubesCreated;
 
     private void OnEnable()
     {
@@ -22,35 +21,39 @@ public class CubeSpawner : MonoBehaviour
 
     private void SpawnCubs(Cube example)
     {
-        if (example.SeparationChance > Random.value)
+        List<Cube> createdCubes = new List<Cube>();
+
+        if (example.SeparationChance > UnityEngine.Random.value)
         {
-            int count = Random.Range(_minCountCreatedCubes, _maxCountCreatedCubes + 1);
+            int count = UnityEngine.Random.Range(_minCountCreatedCubes, _maxCountCreatedCubes + 1);
 
             for (int i = 0; i < count; i++)
-                InstantiateCub(example);
+            {
+                createdCubes.Add(InstantiateCub(example));
+            }
+
+            CubesCreated?.Invoke(createdCubes);
         }
 
         example.Clicked -= SpawnCubs;
+
         _cubes.Remove(example);
+        _cubes = _cubes.Union(createdCubes).ToList();
     }
 
-    private void InstantiateCub(Cube example)
+    private Cube InstantiateCub(Cube example)
     {
-        NewCube = Instantiate(example);
-        NewCube.transform.localScale /= _decreaseScale;
-        NewCube.GetComponent<Renderer>().material.color = GetRandomColor();
-        NewCube.SetSeparationChance(example.SeparationChance / _decreaseSeparationChance);
-        NewCube.Clicked += SpawnCubs;
-        _cubes.Add(NewCube);
-        CubeCreated?.Invoke();
+        Cube newCube = Instantiate(example);
+        newCube.transform.localScale /= _decreaseScale;
+        newCube.SerColor(GetRandomColor());
+        newCube.SetSeparationChance(example.SeparationChance / _decreaseSeparationChance);
+        newCube.Clicked += SpawnCubs;
+
+        return newCube;
     }
 
     private Color GetRandomColor()
     {
-        float randomChannelOne = Random.value;
-        float randomChannelTwo = Random.value;
-        float randomChannelThree = Random.value;
-
-        return new Color(randomChannelOne, randomChannelTwo, randomChannelThree);
+        return UnityEngine.Random.ColorHSV();
     }
 }
